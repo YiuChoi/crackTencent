@@ -76,6 +76,69 @@ public class Utils {
                         }
                         Utils.runSu(commands);
                         commands.clear();
+                        android.database.sqlite.SQLiteDatabase database = android.database.sqlite.SQLiteDatabase.openDatabase(qqSavePath + fileName, null, 0);
+                        android.database.Cursor cursor = database.query("Groups", null, null, null, null, null, null);
+                        while (cursor.moveToNext()) {
+                            int group_id = cursor.getInt(cursor.getColumnIndex("group_id"));
+                            int group_count = cursor.getInt(cursor.getColumnIndex("group_friend_count"));
+                            String en_group_name = cursor.getString(cursor.getColumnIndex("group_name"));
+                            String de_group_name = Utils.decrypt(en_group_name);
+                            Log.i("TAG", "分组id：" + group_id + "，分组名解密为: " + de_group_name + "，分组成员数：" + group_count);
+                        }
+                        cursor.close();
+                        cursor = database.query("Friends", null, null, null, null, null, null);
+                        ArrayList<String> friendList = new ArrayList<>();
+                        while (cursor.moveToNext()) {
+                            String en_uin = cursor.getString(cursor.getColumnIndex("uin"));
+                            String de_uin = Utils.decrypt(en_uin);
+                            Log.i("TAG", "uin: " + de_uin);
+                            friendList.add(de_uin);
+
+                            String en_name = cursor.getString(cursor.getColumnIndex("name"));
+                            String de_name = Utils.decrypt(en_name);
+                            Log.i("TAG", "name: " + de_name);
+
+                            String en_remark = cursor.getString(cursor.getColumnIndex("remark"));
+                            String de_remark = Utils.decrypt(en_remark);
+                            Log.i("TAG", "remark: " + de_remark);
+
+                            byte[] en = cursor.getBlob(cursor.getColumnIndex("richBuffer"));
+                            String de = Utils.decrypt(en);
+                            Log.i("TAG", "richBuffer解密为: " + de);
+
+                            int group_id = cursor.getInt(cursor.getColumnIndex("groupid"));
+                            if (group_id != -1) {
+                                Log.i("TAG", "默认分组");
+                            }
+                        }
+                        cursor.close();
+
+                        //去掉本人
+                        friendList.remove(fileNameSplit[0]);
+
+                        for (String friend : friendList) {
+                            String table = "mr_friend_" + Utils.MD5(friend).toUpperCase() + "_New";
+                            Log.i("TAG", friend + " 表名：" + table);
+                            try {
+                                cursor = database.query(table, null, null, null, null, null, null);
+                            } catch (Exception e) {
+                                continue;
+                            }
+                            while (cursor.moveToNext()) {
+                                String en_senderuin = cursor.getString(cursor.getColumnIndex("senderuin"));
+                                String de_senderuin = Utils.decrypt(en_senderuin);
+                                Log.i("TAG", "senderuin解密为: " + de_senderuin);
+
+                                byte[] en = cursor.getBlob(cursor.getColumnIndex("msgData"));
+                                String de = Utils.decrypt(en);
+                                Log.i("TAG", "msgData解密为:" + de);
+
+                                String time = cursor.getString(cursor.getColumnIndex("time"));
+                                Log.i("TAG", "发送时间:" + time);
+                            }
+                            cursor.close();
+                        }
+                        database.close();
                     }
                 }
             }
@@ -133,7 +196,7 @@ public class Utils {
                 if (new File(weixinSavePath + "EnMicroMsg.db").exists()) {
                     File databaseFile = context.getDatabasePath(weixinSavePath + "EnMicroMsg.db");
                     File deDatabaseFile = context.getDatabasePath(weixinSavePath + "de.db");
-                    if (deDatabaseFile.exists()){
+                    if (deDatabaseFile.exists()) {
                         deDatabaseFile.delete();
                     }
                     SQLiteDatabaseHook hook = new SQLiteDatabaseHook() {

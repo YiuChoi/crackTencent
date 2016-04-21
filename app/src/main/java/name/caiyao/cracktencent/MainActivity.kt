@@ -29,17 +29,30 @@ class MainActivity : AppCompatActivity() {
             if (checkReadPhoneStatePermission != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_PHONE_STATE), REQUEST_FOR_READ_PHONE_STATE)
             } else {
-                Utils.init(this)
+                Thread() {
+                    run {
+                        Utils.init(this)
+                    }
+                }.start()
             }
             val checkWriteExtenelPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
             if (checkWriteExtenelPermission != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_FOR_WRITE_EXTERNAL_STORAGE)
             } else {
-                Utils.copyDatabase(this)
+                Thread() {
+                    run {
+                        Utils.copyDatabase(this)
+                    }
+                }.start()
             }
         } else {
-            Utils.init(this)
-            Utils.copyDatabase(this)
+            Thread() {
+                run {
+                    Utils.init(this)
+                    Utils.copyDatabase(this)
+                }
+            }.start()
+
         }
 
         val fab = findViewById(R.id.fab) as FloatingActionButton
@@ -49,12 +62,20 @@ class MainActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when (requestCode) {
             REQUEST_FOR_READ_PHONE_STATE -> if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Utils.init(this)
+                Thread() {
+                    run {
+                        Utils.init(this)
+                    }
+                }.start()
             } else {
                 Toast.makeText(this, "读取IMEI权限被禁止！", Toast.LENGTH_SHORT).show()
             }
             REQUEST_FOR_WRITE_EXTERNAL_STORAGE -> if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Utils.copyDatabase(this)
+                Thread() {
+                    run {
+                        Utils.copyDatabase(this)
+                    }
+                }.start()
             } else {
                 Toast.makeText(this, "写文件权限被禁止！", Toast.LENGTH_SHORT).show()
             }
