@@ -3,17 +3,18 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '24.0.0 rc3'
+    buildToolsVersion '23.0.1'
 
     sourceSets{
         main{
             jniLibs.srcDirs=['libs']
         }
+        main.java.srcDirs += 'src/main/kotlin'
     }
     defaultConfig {
         applicationId "name.caiyao.cracktencent"
         minSdkVersion 16
-        targetSdkVersion 23
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
     }
@@ -33,20 +34,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile files('libs/commons-codec.jar')
     compile files('libs/guava-r09.jar')
     compile files('libs/sqlcipher.jar')
-}
-buildscript {
-    ext.kotlin_version = '1.0.0-rc-1036'
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-repositories {
-    mavenCentral()
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }

@@ -55,7 +55,7 @@ public class Utils {
         String QQDbPath = "/data/data/com.tencent.mobileqq/databases";
         File file = new File(QQDbPath);
         ArrayList<String> commands = new ArrayList<>();
-        commands.add("chmod 777 " + QQDbPath);
+        commands.add("chmod 777 " + QQDbPath +" -R");
         Utils.runSu(commands);
         commands.clear();
         File[] files = file.listFiles();
@@ -72,7 +72,7 @@ public class Utils {
                         if (Utils.findBinary("busybox")) {
                             commands.add("busybox cp -r " + f.getPath() + " " + qqSavePath + fileName);
                         } else {
-                            commands.add("cat " + f.getPath() + " > " + qqSavePath + fileName);
+                            commands.add("dd if=" + f.getPath() + " of=" + qqSavePath + fileName);
                         }
                         Utils.runSu(commands);
                         commands.clear();
@@ -147,7 +147,7 @@ public class Utils {
         String weixinDbPath = "/data/data/com.tencent.mm/MicroMsg";
         String weixinSp = "/data/data/com.tencent.mm/shared_prefs/system_config_prefs.xml";
         String crackSp = "/data/data/name.caiyao.cracktencent/shared_prefs/system_config_prefs.xml";
-        commands.add("chmod 777 " + weixinDbPath);
+        commands.add("chmod 777 " + weixinDbPath +" -R");
         if (Utils.findBinary("busybox")) {
             commands.add("busybox cp -r " + weixinSp + " " + crackSp);
         } else {
@@ -184,17 +184,18 @@ public class Utils {
         for (File f : files) {
             if (f.isDirectory() && (f.getName().length() == 32)) {
                 String dbPath = f.getAbsolutePath();
-                String infoDbPath = dbPath + "/EnMicroMsg.db";
+                //String infoDbPath = dbPath + "/EnMicroMsg.db";
+                String infoDbPath = dbPath + "/SnsMicroMsg.db";
                 commands.add("chmod 777 " + infoDbPath);
                 if (Utils.findBinary("busybox")) {
-                    commands.add("busybox cp -r " + infoDbPath + " " + weixinSavePath + "EnMicroMsg.db");
+                    commands.add("busybox cp -r " + infoDbPath + " " + weixinSavePath + "SnsMicroMsg.db");
                 } else {
-                    commands.add("dd if=" + infoDbPath + " of=" + weixinSavePath + "EnMicroMsg.db");
+                    commands.add("dd if=" + infoDbPath + " of=" + weixinSavePath + "SnsMicroMsg.db");
                 }
                 Utils.runSu(commands);
                 commands.clear();
                 if (new File(weixinSavePath + "EnMicroMsg.db").exists()) {
-                    File databaseFile = context.getDatabasePath(weixinSavePath + "EnMicroMsg.db");
+                    File databaseFile = context.getDatabasePath(weixinSavePath + "SnsMicroMsg.db");
                     File deDatabaseFile = context.getDatabasePath(weixinSavePath + "de.db");
                     if (deDatabaseFile.exists()) {
                         deDatabaseFile.delete();
@@ -331,7 +332,7 @@ public class Utils {
     }
 
     public static boolean findBinary(String binaryName) {
-        if (!TextUtils.isEmpty(binaryName)) {
+        if (TextUtils.isEmpty(binaryName)) {
             for (String path : binaryPaths) {
                 File file = new File(path + binaryName);
                 if (file.exists())
