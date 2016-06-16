@@ -1,15 +1,13 @@
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '23.0.1'
+    buildToolsVersion '24.0.0'
 
     sourceSets{
         main{
             jniLibs.srcDirs=['libs']
         }
-        main.java.srcDirs += 'src/main/kotlin'
     }
     defaultConfig {
         applicationId "name.caiyao.cracktencent"
@@ -24,9 +22,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-    }
 }
 
 dependencies {
@@ -36,5 +31,5 @@ dependencies {
     compile 'com.android.support:design:23.1.1'
     compile files('libs/guava-r09.jar')
     compile files('libs/sqlcipher.jar')
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile files('libs/commons-codec.jar')
 }

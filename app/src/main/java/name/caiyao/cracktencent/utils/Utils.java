@@ -162,11 +162,13 @@ public class Utils {
         if (str.equals("0")) {
             Log.i("TAG", "通过sharepreference获取uin失败");
             if (Utils.findBinary("busybox")) {
-                commands.add("busybox cp -r " + weixinSp + " " + weixinSavePath + "uin.xml");
+                commands.add("busybox cp -r " + weixinSp + " " + weixinSavePath + "/uin.xml");
             } else {
-                commands.add("cat " + weixinSp + " > " + weixinSavePath + "uin.xml");
+                commands.add("cat " + weixinSp + " > " + weixinSavePath + "/uin.xml");
             }
-            str = getUin(weixinDbPath + "uin.xml");
+            Utils.runSu(commands);
+            commands.clear();
+            str = getUin(weixinSavePath + "/uin.xml");
             if (str.equals("")) {
                 Log.i("TAG", "无法获取uin");
                 return;
@@ -238,7 +240,7 @@ public class Utils {
                     if (("default_uin").equals(xmlPullParser.getAttributeValue(null, "name")))
                         return xmlPullParser.getAttributeValue(null, "value");
                 } else {
-                    xmlPullParser.nextTag();
+                   eventType =  xmlPullParser.next();
                 }
             }
         } catch (XmlPullParserException | IOException e) {
