@@ -159,6 +159,7 @@ public class Utils {
         SharedPreferences sp = context.getSharedPreferences(
                 "system_config_prefs", 0);
         String str = String.valueOf(sp.getInt("default_uin", 0));
+        str ="-833076470";
         if (str.equals("0")) {
             Log.i("TAG", "通过sharepreference获取uin失败");
             if (Utils.findBinary("busybox")) {
@@ -186,18 +187,18 @@ public class Utils {
         for (File f : files) {
             if (f.isDirectory() && (f.getName().length() == 32)) {
                 String dbPath = f.getAbsolutePath();
-                //String infoDbPath = dbPath + "/EnMicroMsg.db";
-                String infoDbPath = dbPath + "/SnsMicroMsg.db";
+                String infoDbPath = dbPath + "/EnMicroMsg.db";
+                //String infoDbPath = dbPath + "/SnsMicroMsg.db";
                 commands.add("chmod 777 " + infoDbPath);
                 if (Utils.findBinary("busybox")) {
-                    commands.add("busybox cp -r " + infoDbPath + " " + weixinSavePath + "SnsMicroMsg.db");
+                    commands.add("busybox cp -r " + infoDbPath + " " + weixinSavePath + "EnMicroMsg.db");
                 } else {
-                    commands.add("dd if=" + infoDbPath + " of=" + weixinSavePath + "SnsMicroMsg.db");
+                    commands.add("dd if=" + infoDbPath + " of=" + weixinSavePath + "EnMicroMsg.db");
                 }
                 Utils.runSu(commands);
                 commands.clear();
                 if (new File(weixinSavePath + "EnMicroMsg.db").exists()) {
-                    File databaseFile = context.getDatabasePath(weixinSavePath + "SnsMicroMsg.db");
+                    File databaseFile = context.getDatabasePath(weixinSavePath + "EnMicroMsg.db");
                     File deDatabaseFile = context.getDatabasePath(weixinSavePath + "de.db");
                     if (deDatabaseFile.exists()) {
                         deDatabaseFile.delete();
